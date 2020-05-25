@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-import numba
+import numba, timeit
+from numba.typed import List 
 from scipy.sparse import csr_matrix
 
-# networkit generates a lot of warnings, removed for clarity purposes
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -21,7 +21,6 @@ def _fill(sum_degrees_com, int_degree_indptr, int_degree_indices, int_degree_dat
     """
     src,dst,weight=edge
     cpt=2*index
-    # THIS SHOULD NEVER HAPPEN
     try:
         #to avoid counting twice edges inside a community
         if vector[src]==vector[dst]:
@@ -30,7 +29,6 @@ def _fill(sum_degrees_com, int_degree_indptr, int_degree_indices, int_degree_dat
             sum_degrees_com[vector[src]]+=weight
             sum_degrees_com[vector[dst]]+=weight
             
-        # NOTE: if a coordinate occurs several times, the sum is made
         int_degree_indptr[cpt]=src
         int_degree_indices[cpt]=vector[dst]
         int_degree_data[cpt]=weight
@@ -42,22 +40,24 @@ def _fill(sum_degrees_com, int_degree_indptr, int_degree_indices, int_degree_dat
         pass
     
 @numba.njit(parallel=True)
-def _arrays_nfm(edges, vector, size_partition, nb_nodes):
+def _arrays_nfm(edges, vector, size_partition, nb_nodes,verbose=False):
     sum_degrees_com=[0]*size_partition
     
-    # FIXME: the size = number of edges!
     int_degree_indptr = [0]*(2*len(edges))
     int_degree_indices = [0]*(2*len(edges))
     int_degree_data = [0.]*(2*len(edges))
-            
+    
+    if(verbose):
+        print("computing community degrees and internal node degrees...")
     for index,edge in enumerate(edges):
         _fill(sum_degrees_com, int_degree_indptr, int_degree_indices, int_degree_data, vector, edge, index)
                         
     return sum_degrees_com, int_degree_indptr, int_degree_indices, int_degree_data
 
 @numba.njit(parallel=True)
-def _compute_nfm(sum_degrees_com, vector, size_partition,weighted,indptr,indices,data,positions):
+def _compute_nfm(sum_degrees_com, vector, size_partition,weighted,indptr,indices,data,positions,verbose=False):
     
+    # computing the size of each needed array
     size_np = len([1 for _,com in positions if sum_degrees_com[com] != 0])
     size_nr = len([1 for u,_ in positions if weighted[u] !=0])
     
@@ -68,21 +68,21 @@ def _compute_nfm(sum_degrees_com, vector, size_partition,weighted,indptr,indices
     nr_indptr = [0]*size_nr
     nr_indices = [0]*size_nr
     nr_data = [0.0]*size_nr
-    
-    # TODO: first compute the number of nonzero positions to avoid append!
 
+    if(verbose):
+        print("computing Node Predominance and Node Recall...")
     index_np, index_nr=0,0
     for u, com in positions:
         if sum_degrees_com[com] != 0:
             np_indptr[index_np]=u
             np_indices[index_np]=com
-            #np_data[index_np]=positions[(u,com)] / sum_degrees_com[com]
+            #np_data[index_np]=(value/sum_degrees_com[com])
             np_data[index_np]=get_item(u,com,indptr,indices,data) / sum_degrees_com[com]
             index_np+=1
         if weighted[u] != 0:
             nr_indptr[index_nr]=u
             nr_indices[index_nr]=com
-            #nr_data[index_nr]=positions[(u,com)] / weighted[u]
+            #nr_data[index_nr]=(value/weighted[u])
             nr_data[index_nr]=get_item(u,com,indptr,indices,data) / weighted[u]
             index_nr+=1
     return np_indptr, np_indices, np_data, nr_indptr, nr_indices, nr_data
@@ -101,20 +101,23 @@ def get_item(row_index, column_index, indptr, indices, data):
     value_index = row_indices.index(column_index)
     return row_values[value_index]
 
-def get_nfm_embeddings(edges, weights, vector, size_partition, nodes):
+def get_nfm_embeddings(edges, weights, vector, size_partition, nodes,verbose=False):
 
-    
     numba_edges = List()
     [numba_edges.append((edge[0],edge[1],edge[2])) for edge in edges]
     numba_weighted = List()
     [numba_weighted.append(weights[node]) for node in range(nodes)]
     
-    sum_degrees_com,indptr,indices,data=_arrays_nfm(numba_edges, vector, size_partition, nodes)
+    sum_degrees_com,indptr,indices,data=_arrays_nfm(numba_edges, vector, size_partition, nodes,verbose)
     int_degree=csr_matrix((data,(indptr,indices)), shape=(nodes,size_partition))
-    positions=list(zip(*int_degree.nonzero()))
+    positions=[(i,j) for i, j in zip(*int_degree.nonzero())]
+    #positions=List()
+    #[positions.append((i, j, int_degree[i,j])) for i, j in zip(*int_degree.nonzero())]
     
-    #print(sys.getsizeof(items)/1024.,"kylobytes")
-    np_indptr, np_indices, np_data, nr_indptr, nr_indices, nr_data = _compute_nfm(sum_degrees_com, vector, size_partition, numba_weighted, int_degree.indptr,int_degree.indices,int_degree.data,positions)
+    #print(sys.getsizeof(items)/1024.,"kylobytes")    
+    if(verbose):
+        print("computing embeddings...")
+    np_indptr, np_indices, np_data, nr_indptr, nr_indices, nr_data = _compute_nfm(sum_degrees_com, vector, size_partition, numba_weighted, int_degree.indptr,int_degree.indices,int_degree.data,positions,verbose)
     np=csr_matrix((np_data,(np_indptr,np_indices)), shape=(nodes,size_partition))
     nr=csr_matrix((nr_data,(nr_indptr,nr_indices)), shape=(nodes,size_partition))
 
