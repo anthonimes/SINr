@@ -1,6 +1,5 @@
 if __name__ == "__main__":
     from scipy.sparse import csr_matrix
-    import numpy as np
     import networkx as nx
     import nfm2vec.nfm_sparse as nfm_sparse
     import warnings, sys
@@ -16,7 +15,9 @@ if __name__ == "__main__":
         G=nx.read_weighted_edgelist(graph, nodetype=int)
         G.remove_edges_from(nx.selfloop_edges(G))
         
+        print("computing communities...")
         partition = community_louvain.best_partition(G)
+        print("done.")
         
         # extracting partition vector
         partition_vector = list(partition.values())
@@ -28,7 +29,8 @@ if __name__ == "__main__":
         number_communities = max(partition_vector)+1
         nodes = len(G)
         # computing embedding vectors --- CSR numpy format: https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.csr_matrix.html
-        np,nr,embedding_matrix = nfm_sparse.get_nfm_embeddings(edges, weights, partition_vector, number_communities, nodes)
+        np,nr,embedding_matrix = nfm_sparse.get_nfm_embeddings(edges, weights, partition_vector, number_communities, nodes, True)
+        print("embeddings shape: ",np.shape)
         """le format CSR est particulier : une matrice est représentée par trois tableaux indptr, indices et data
         + indptr représente le début de chaque ligne, ou autrement dit le nombre de valeurs non nulles pour chaque ligne
         pour représenter une matrice 4x4, si on a indptr = [0, 3, 3, 7, 10] alors :
