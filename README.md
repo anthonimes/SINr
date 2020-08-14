@@ -10,7 +10,7 @@ Edges should be represented using tuples according to the following format:
 *(id1, id2, weight)*
 
 For similar reasons, the communities are expected as arguments of the methods using a list containing, for each node, the label of the community it belongs to. 
-** For these reasons, all graphs must be numbered from `0` to `(number of nodes - 1)`. Since most graph libraries implement them, we do not provide a relabeling function.
+** For these reasons, all graphs must be numbered from `0` to `(number of nodes - 1)`. Since most graph libraries implement them, we do not provide a relabeling function.**
 
 ## Embeddings
 
