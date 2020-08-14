@@ -10,11 +10,13 @@ Edges should be represented using tuples according to the following format:
 *(id1, id2, weight)*
 
 For similar reasons, the communities are expected as arguments of the methods using a list containing, for each node, the label of the community it belongs to. 
-** For these reasons, all graphs must be numbered from `0` to `(number of nodes - 1)`. 
+** For these reasons, all graphs must be numbered from `0` to `(number of nodes - 1)`. Since most graph libraries implement them, we do not provide a relabeling function.
 
 ## Embeddings
 
-The embeddings are returned as `numpy` matrices in both cases. In order to allow more flexibility, we chose not to implement any method to save or load embeddings. We recommand using the [load](https://numpy.org/doc/stable/reference/generated/numpy.load.html#numpy.load) and [save](https://numpy.org/doc/stable/reference/generated/numpy.save.html) methods from `numpy` and can provide assistance for dealing with embeddings.  
+The embeddings are returned as `numpy` matrices in both cases. Every row contains the embedding vector of the corresponding node in the network
+
+In order to allow more flexibility, we chose not to implement any method to save or load embeddings. We recommand using the [load](https://numpy.org/doc/stable/reference/generated/numpy.load.html#numpy.load) and [save](https://numpy.org/doc/stable/reference/generated/numpy.save.html) methods from `numpy` and can provide assistance for dealing with embeddings.  
 
 ## Examples
 
