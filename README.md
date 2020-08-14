@@ -19,13 +19,13 @@ In order to allow more flexibility, we chose not to implement any method to save
 
 ## Examples
 
-Two examples are provided for [*networkx*](https://networkx.github.io/) (`src/network_example.py`) and [*networkit*](https://networkit.github.io/) (`src/networit_example.py`) python libraries. In both cases one argument (the graph) is needed:
+Two examples are provided for [`networkx`](https://networkx.github.io/) (`src/network_example.py`) and [`networkit`](https://networkit.github.io/) (`src/networit_example.py`) python libraries. In both cases one argument (the graph) is needed:
 
 `python src/networkx_examply.py examples/citeseer.ed`
 
 The only output produced by such examples is the time needed to compute embeddings. As mentioned previsouly, embeddings are returned by the functions as `numpy` matrices. 
 
-For the *networkx* example, the additional [*python-louvain*](https://github.com/taynaud/python-louvain) is used to produce communities. Regarding *networkit*, the built-in Louvain's algorithm is used. 
+For the `networkx` example, the additional [`python-louvain`](https://github.com/taynaud/python-louvain) is used to produce communities. Regarding `networkit`, the built-in Louvain's algorithm is used. 
 
 ## Requirements
 
