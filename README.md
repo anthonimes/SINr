@@ -22,7 +22,7 @@ Two examples are provided for [*networkx*](https://networkx.github.io/) (`src/ne
 
 ## Dependencies
 
-**SINr** relies on the following python modules 
+**SINr** relies on the following python modules:
 
 * `numpy >= 1.18`
 * `numba`
