@@ -20,11 +20,18 @@ In order to allow more flexibility, we chose not to implement any method to save
 
 ## Examples
 
-Two examples are provided for [*networkx*](https://networkx.github.io/) (`src/network_example.py`) and [*networkit*](https://networkit.github.io/) python libraries. For the former case, the additional [*python-louvain*](https://github.com/taynaud/python-louvain) is used to produce communities. In the latter case, the build-in Louvain's algorithm is used. 
+Two examples are provided for [*networkx*](https://networkx.github.io/) (`src/network_example.py`) and [*networkit*](https://networkit.github.io/) (`src/networit_example.py`) python libraries. In both cases one argument (the graph) is needed:
 
-## Dependencies
+`python src/networkx_examply.py examples/citeseer.ed`
+
+The only output produced by such examples is the time needed to compute embeddings. As mentioned previsouly, embeddings are returned by the functions as numpy matrices and can thus be dealt with using any library. 
+
+For the *networkx* example, the additional [*python-louvain*](https://github.com/taynaud/python-louvain) is used to produce communities. Regarding *networkit*, the built-in Louvain's algorithm is used. 
+
+## Requirements
 
 **SINr** relies on the following python modules:
 
+* `python >= 3.7`
 * `numpy >= 1.18`
 * `numba`
