@@ -1,6 +1,6 @@
 if __name__ == "__main__":
     import networkit as nk
-    import nfm2vec.nfm as nfm
+    import SINr.SINr as SINr
     import time
 
     import warnings, sys
@@ -23,6 +23,7 @@ if __name__ == "__main__":
         
         # extracting partition vector
         partition_vector = partition.getVector()
+        print(partition_vector)
         # initializing list of edges 
         # data specifies the attribute name and default value for edges
         edges = [(edge[0],edge[1],edge[2]) for edge in G.iterEdgesWeights()]
@@ -32,6 +33,6 @@ if __name__ == "__main__":
         # computing embedding vectors
         debut=time.time()
         print("computing embeddings...")
-        np,nr,embedding_matrix = nfm.get_nfm_embeddings(edges, weights, partition_vector, number_communities, nodes)
+        np,nr,embedding_matrix = SINr.get_SINr_embeddings(edges, weights, partition_vector, number_communities, nodes)
         end=time.time()
         print("embeddings computed in {}s".format(end-debut))
