@@ -1,6 +1,6 @@
 if __name__ == "__main__":
     import networkit as nk
-    import SINr.SINr as SINr
+    import SINr.SINr_sparse as SINr
     import time
 
     import warnings, sys
