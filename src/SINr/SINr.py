@@ -39,10 +39,10 @@ def _do_node_fmeasure(edges, weighted_degrees, vector, number_communities, nodes
     """
     
     # list and matrix initialization using numba
-    sum_degrees_com=numpy.zeros(number_communities, dtype=numba.int64)
+    sum_degrees_com=numpy.zeros(number_communities, dtype=numba.float64)
     int_degree=numpy.zeros((nodes, number_communities), dtype=numba.float64)
-    np=numpy.zeros((nodes,number_communities), dtype=numba.float64)
-    nr=numpy.zeros((nodes,number_communities), dtype=numba.float64)
+    NP=numpy.zeros((nodes,number_communities), dtype=numba.float64)
+    NR=numpy.zeros((nodes,number_communities), dtype=numba.float64)
             
     # filling the structures for every edge of the network
     for edge in edges:
@@ -52,15 +52,15 @@ def _do_node_fmeasure(edges, weighted_degrees, vector, number_communities, nodes
     for u in range(len(vector)):
         for com in range(number_communities):
             if sum_degrees_com[com] == 0:
-                np[u][com]= 0
+                NP[u][com]= 0
             else:
-                np[u][com] = int_degree[u][com] / sum_degrees_com[com]
+                NP[u][com] = int_degree[u][com] / sum_degrees_com[com]
             if weighted_degrees[u] == 0:
-                nr[u][com] = 0
+                NR[u][com] = 0
             else:
-                nr[u][com] = int_degree[u][com] / weighted_degrees[u]
+                NR[u][com] = int_degree[u][com] / weighted_degrees[u]
                            
-    return np, nr
+    return NP, NR
 
 def get_SINr_embeddings(edges, weights, vector, number_communities, nodes):
     """Procedure to generate embedding vectors for the network G
@@ -80,11 +80,9 @@ def get_SINr_embeddings(edges, weights, vector, number_communities, nodes):
     [numba_weighted.append(weights[node]) for node in range(nodes)]
     
     # computing Node Predominance and Node Recall
-    np,nr=_do_node_fmeasure(numba_edges, numba_weighted, vector, number_communities, nodes)
+    NP,NR=_do_node_fmeasure(numba_edges, numba_weighted, vector, number_communities, nodes)
     
     # preparing embedding vectors
-    np=numpy.asmatrix(np)
-    nr=numpy.asmatrix(nr)
-    embedding_matrix=numpy.concatenate((np, nr), axis=1)
+    embedding_matrix=numpy.concatenate((NP, NR), axis=1)
     
-    return np,nr,embedding_matrix
+    return NP,NR,embedding_matrix

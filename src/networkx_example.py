@@ -1,7 +1,6 @@
 if __name__ == "__main__":
     from scipy.sparse import csr_matrix
     import networkx as nx
-    import SINr.SINr_sparse as SINr_sparse
     import SINr.SINr as SINr
     import warnings, sys
     import time, random
