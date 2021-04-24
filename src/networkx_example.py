@@ -16,6 +16,7 @@ if __name__ == "__main__":
             w['weight'] = random.random()
     else:
         graph = sys.argv[1]
+        print("loading graph..." + graph)
         G=nx.read_weighted_edgelist(graph, nodetype=int)
         G.remove_edges_from(nx.selfloop_edges(G))
 

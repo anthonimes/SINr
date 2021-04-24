@@ -41,6 +41,9 @@ def _do_node_fmeasure(edges, weighted_degrees, vector, number_communities, nodes
     # list and matrix initialization using numba
     sum_degrees_com=numpy.zeros(number_communities, dtype=numba.float64)
     int_degree=numpy.zeros((nodes, number_communities), dtype=numba.float64)
+    #np=[ [0. for _ in range(number_communities)] for _ in range(nodes) ]
+    # the line below does not work if we use np, but is fine with NP. 
+    # the above line woks however
     NP=numpy.zeros((nodes,number_communities), dtype=numba.float64)
     NR=numpy.zeros((nodes,number_communities), dtype=numba.float64)
             
