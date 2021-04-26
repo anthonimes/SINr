@@ -3,6 +3,7 @@ import numpy
 import numba
 from numba.typed import List
 
+# --- DEV/TODO --- update for directed graphs!
 @numba.njit(parallel=True)
 def _fill(sum_degrees_com, int_degree, vector, edge):
     """updates total degree of edges incident to a community and 
