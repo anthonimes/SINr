@@ -1,6 +1,4 @@
-~~~
-**This repository is deprecated and will not be maintained anymore. The reference implementation for SINr is now available [here](https://github.com/SINr-Embeddings/sinr).
-~~~
+> **This repository is deprecated and will not be maintained anymore. The reference implementation for SINr is now available [here](https://github.com/SINr-Embeddings/sinr)**.
 
 # SINr
 
