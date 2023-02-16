@@ -1,3 +1,7 @@
+~~~
+**This repository is deprecated and will not be maintained anymore. The reference implementation for SINr is now available [here](https://github.com/SINr-Embeddings/sinr).
+~~~
+
 # SINr
 
 **SINr** is a `python` framework to compute sparse and interpretable graph embeddings. The method can rely on any community detection algoritm, and is currently implemented using Louvain's algorithm. 
